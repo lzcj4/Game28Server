@@ -17,6 +17,19 @@ def get_max_id(game_name):
     id = dbHelper.select_max_id(table_name)
     return jsonify({"code": 200, "maxid": str(id)})
 
+@app.route('/recent10/<game_name>')
+def get_recent_10_rounds(game_name):
+    if game_name is None or game_name.isspace() or \
+            (game_name not in games):
+        abort(404)
+
+    table_name = "tb_{}".format(game_name.lower())
+    sql = DBHelper.SELECT_ROWS_SQL.format(table_name)+" order by r_id desc limit 0,10"
+    rows = dbHelper.select_all(sql)
+    row_list = []
+    for item in rows:
+        row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
+    return jsonify({"code": 200, "count": len(rows), "items": row_list})
 
 @app.route('/rounds', methods=["post"])
 def get_rounds():
@@ -61,7 +74,7 @@ def get_rounds():
     rows = dbHelper.select_all(sql)
     row_list = []
     for item in rows:
-        row_list.append({'r_id': item[0], 'r_date': str(item[1]), 'r_value': item[2]})
+        row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
     return jsonify({"code": 200, "count": len(rows), "items": row_list})
 
 
@@ -71,5 +84,5 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    # app.run(host="0.0.0.0")
+    # app.run(debug=True)
+     app.run(host="0.0.0.0")
