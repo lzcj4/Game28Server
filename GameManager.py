@@ -15,8 +15,8 @@ def start_game(game_type):
 
 
 def start_all_game():
-    while not GameBase.login_action():
-        time.sleep(5)
+    # while not GameBase.login_action():
+    #     time.sleep(5)
 
     is_running = True
     threading.Thread(target=lambda: start_game(GameType.PC28)).start()

@@ -14,7 +14,6 @@ class GameBase:
     webCrawler = WebCrawler()
 
     def __init__(self):
-        self.max_round = 0
         self.dbHelper = DBHelper()
         # if GameBase.webCrawler is None:
         #     GameBase.webCrawler = WebCrawler()
@@ -51,8 +50,8 @@ class GameBase:
     @staticmethod
     def login(user, pwd, verify_code):
         data = (
-        "jxy_parameter=%7B%22c%22%3A%22index%22%2C%22fun%22%3A%22login%22%2C%22account%22%3A%22{}%22%2C%22password" + \
-        "%22%3A%22{}%22%2C%22verificat_code%22%3A%22{}%22%2C%22is_auto%22%3Atrue%7D").format(
+            "jxy_parameter=%7B%22c%22%3A%22index%22%2C%22fun%22%3A%22login%22%2C%22account%22%3A%22{}%22%2C%22password" + \
+            "%22%3A%22{}%22%2C%22verificat_code%22%3A%22{}%22%2C%22is_auto%22%3Atrue%7D").format(
             user, pwd, verify_code)
         header = GameBase.get_header()
         header["Referer"] = "http://www.juxiangyou.com/login/index?redirectUrl=/fun/play/crazy28/index"
@@ -82,26 +81,16 @@ class GameBase:
         pass
 
     def get_rounds(self):
-        if not GameBase.login_action():
-            return
-        table_name = self.get_table_name()
-        self.max_round = self.dbHelper.select_max_id(table_name)
-        if self.max_round == 0:
-            self.get_old_50_pages()
-        else:
-            r = GameBase.webCrawler.get(self.get_game_url(), GameBase.get_header())
-            rounds = self.get_rows(r.text)
-            if len(rounds) > 0:
-                self.dbHelper.insert(table_name, rounds)
-                print("{} - 新数据 {}:{}条".format(datetime.datetime.now(), self.get_game_name(), len(rounds)))
+        # if not GameBase.login_action():
+        #     return
+        self.get_pages(50)
 
-    def get_old_50_pages(self):
-        if not GameBase.login_action():
-            return
-
+    def get_pages(self, page_num):
         table_name = self.get_table_name()
         game_name = self.get_game_name()
-        for i in range(50):
+        max_round = self.dbHelper.select_max_id(table_name)
+        is_end = False
+        for i in range(page_num):
             url = ("http://www.juxiangyou.com/fun/play/interaction/?jxy_parameter=%7B%22c%22%3A%22quiz%22%2C%22" + \
                    "fun%22%3A%22getEachList%22%2C%22items%22%3A%22{}%22%2C%22pageSize%22%3A20%2C%22" + \
                    "pageIndex%22%3A{}%7D&xtpl=fun%2Fprivate%2Fjc-index-tbl&params%5Bitems%5D={}"). \
@@ -111,12 +100,18 @@ class GameBase:
             rounds = []
             for item in json["itemList"]:
                 if item["jcjg2"] is not False:
+                    num = int(item["num"])
+                    if num <= max_round:
+                        is_end = True
+                        break
                     rounds.append(
-                        [item["num"], "{}-{}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
+                        [num, "{}-{}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
                 print("{} - 历史数据 {}:{}条".format(datetime.datetime.now(), table_name, len(rounds)))
+            if is_end:
+                return
 
     def get_rows(self, html):
         """
