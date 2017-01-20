@@ -1,5 +1,5 @@
 import requests
-import  logging
+import logging
 
 
 class WebCrawler:

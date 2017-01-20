@@ -108,14 +108,14 @@ class GameBase:
                     num = int(item["num"])
                     if num <= max_round:
                         is_end = True
-                        logging.info("没有新开游戏期号,当前最新期号:{0}".format(max_round))
+                        logging.info("没有新开游戏期号,当前最新期号:{0}-{1}".format(max_round, game_name))
                         break
                     rounds.append(
-                        [num, "{}-{}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
+                        [num, "{0}-{1}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
-                print("{} - 历史数据 {}:{}条".format(datetime.datetime.now(), table_name, len(rounds)))
+                print("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
                 return
 
