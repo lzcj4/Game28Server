@@ -18,7 +18,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 
 
 def load_logging():
-    logging.basicConfig(level=logging.INFO, filename="Logs/logfile.txt", filemode="a+",
+    logging.basicConfig(level=logging.INFO, filename="./Logs/logfile.txt", filemode="a+",
                         format="%(asctime)-15s %(levelname)-8s %(message)s")
     sys.excepthook = handle_exception
 

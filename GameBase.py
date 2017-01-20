@@ -37,8 +37,9 @@ class GameBase:
     def get_verify_code():
         r = GameBase.webCrawler.get(GameBase.LOGIN_INDEX_URL, GameBase.get_header())
         if "游戏期号" in r.text:
+            r.close()
             return True
-
+        r.close()
         r = GameBase.webCrawler.get(GameBase.VERIFY_URL, GameBase.get_header())
         verify_img = os.path.curdir + GameBase.VERIFY_CODE_FILE_PATH
         if r.status_code == 200:
@@ -49,6 +50,7 @@ class GameBase:
                     f.write(block)
                 print("当前验证码路径:{}".format(os.path.abspath(verify_img)))
                 logging.info("当前验证码路径:{}".format(os.path.abspath(verify_img)))
+        r.close()
         return False
 
     @staticmethod
@@ -63,6 +65,7 @@ class GameBase:
         print(r.text)
         logging.info(r.text)
         a = r.json()["code"]
+        r.close()
         return GameBase.LOGIN_CODE_SUCCEED == a
 
     @staticmethod
@@ -102,7 +105,13 @@ class GameBase:
                    "pageIndex%22%3A{}%7D&xtpl=fun%2Fprivate%2Fjc-index-tbl&params%5Bitems%5D={}"). \
                 format(game_name, i + 1, game_name)
             r = GameBase.webCrawler.get(url, GameBase.get_header())
-            json = r.json()
+            try:
+                json = r.json()
+            except:
+                logging.error("JSON 解析出错")
+                continue
+            finally:
+                r.close()
             rounds = []
             if json is None or "itemList" not in json:
                 continue
