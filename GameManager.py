@@ -1,10 +1,26 @@
-from GameFactory import GameFactory, GameType
-from GameBase import GameBase
+import logging
+import sys
 import threading
 import time
 
+from GameFactory import GameFactory, GameType
+
+logging.basicConfig(level=logging.INFO, filename="Logs/logfile.txt", filemode="a+",
+                    format="%(asctime)-15s %(levelname)-8s %(message)s")
+
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+
+sys.excepthook = handle_exception
+
 is_running = True
-sleep_seconds = 30
+sleep_seconds = 1 * 60
 
 
 def start_game(game_type):

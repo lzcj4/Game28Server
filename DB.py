@@ -1,4 +1,5 @@
 import pymysql
+import logging
 
 
 class DB:
@@ -13,13 +14,18 @@ class DB:
     # DATABASE = "game"
 
     def __init__(self):
-        self.db = pymysql.connect(DB.HOST, DB.USER, DB.PASSWORD, DB.DATABASE)
+        try:
+           self.db = pymysql.connect(DB.HOST, DB.USER, DB.PASSWORD, DB.DATABASE)
+        except pymysql.err.Error as err:
+           logging.error("mysql 建立连接异常:{}".format(err))
 
     def select_all(self, sql):
         try:
             cursor = self.db.cursor()
             cursor.execute(sql)
             return cursor.fetchall()
+        except pymysql.err.Error as err:
+            logging.error("mysql select_all异常:{}".format(err))
         finally:
             cursor.close()
 
@@ -28,6 +34,8 @@ class DB:
             cursor = self.db.cursor()
             cursor.execute(sql)
             return cursor.fetchone()
+        except pymysql.err.Error as err:
+            logging.error("mysql select_one异常:{}".format(err))
         finally:
             cursor.close()
 
@@ -36,5 +44,7 @@ class DB:
             cursor = self.db.cursor()
             cursor.execute(sql)
             self.db.commit()
+        except pymysql.err.Error as err:
+            logging.error("mysql insert异常:{}".format(err))
         finally:
             cursor.close()

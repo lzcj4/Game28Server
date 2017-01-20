@@ -3,6 +3,7 @@ from DBHelper import DBHelper
 import os
 import bs4
 import datetime
+import logging
 
 
 class GameBase:
@@ -11,6 +12,8 @@ class GameBase:
     VERIFY_URL = HOST + "verify"
     LOGIN_POST_URL = HOST + "login/auth"
     VERIFY_CODE_FILE_PATH = "/Img/verifyCode.png"
+    LOGIN_CODE_SUCCEED = 10000
+    LOAD_PAGES = 50
     webCrawler = WebCrawler()
 
     def __init__(self):
@@ -58,7 +61,7 @@ class GameBase:
         r = GameBase.webCrawler.post(GameBase.LOGIN_POST_URL, data, header)
         print(r.text)
         a = r.json()["code"]
-        return 10000 == a
+        return GameBase.LOGIN_CODE_SUCCEED == a
 
     @staticmethod
     def login_action():
@@ -83,7 +86,7 @@ class GameBase:
     def get_rounds(self):
         # if not GameBase.login_action():
         #     return
-        self.get_pages(50)
+        self.get_pages(GameBase.LOAD_PAGES)
 
     def get_pages(self, page_num):
         table_name = self.get_table_name()
@@ -98,11 +101,14 @@ class GameBase:
             r = GameBase.webCrawler.get(url, GameBase.get_header())
             json = r.json()
             rounds = []
+            if json is None or "itemList" not in json:
+                continue
             for item in json["itemList"]:
                 if item["jcjg2"] is not False:
                     num = int(item["num"])
                     if num <= max_round:
                         is_end = True
+                        logging.info("没有新开游戏期号,当前最新期号:{0}".format(max_round))
                         break
                     rounds.append(
                         [num, "{}-{}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])

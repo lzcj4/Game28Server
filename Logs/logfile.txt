@@ -1,0 +1,19 @@
+2017-01-20 09:43:55,500 ERROR    mysql 建立连接异常:(2003, "Can't connect to MySQL server on 'rds068v4i0ni5xbccq32.mysql.rds.aliyuncs.com' ([WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。)")
+2017-01-20 09:43:55,539 ERROR    mysql 建立连接异常:(2003, "Can't connect to MySQL server on 'rds068v4i0ni5xbccq32.mysql.rds.aliyuncs.com' ([WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。)")
+2017-01-20 09:43:55,539 ERROR    mysql 建立连接异常:(2003, "Can't connect to MySQL server on 'rds068v4i0ni5xbccq32.mysql.rds.aliyuncs.com' ([WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。)")
+2017-01-20 09:43:55,540 ERROR    mysql 建立连接异常:(2003, "Can't connect to MySQL server on 'rds068v4i0ni5xbccq32.mysql.rds.aliyuncs.com' ([WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。)")
+2017-01-20 09:44:30,275 INFO     没有新开游戏期号,当前最新期号:217509
+2017-01-20 09:44:30,567 INFO     没有新开游戏期号,当前最新期号:593003
+2017-01-20 09:44:30,569 ERROR    mysql insert异常:(1062, "Duplicate entry '803998' for key 2")
+2017-01-20 09:44:30,657 INFO     没有新开游戏期号,当前最新期号:217509
+2017-01-20 09:44:30,658 ERROR    mysql insert异常:(1062, "Duplicate entry '217510' for key 2")
+2017-01-20 09:44:30,658 ERROR    mysql insert异常:(1062, "Duplicate entry '217510' for key 2")
+2017-01-20 09:44:31,323 ERROR    mysql insert异常:(1062, "Duplicate entry '803983' for key 2")
+2017-01-20 09:44:31,625 ERROR    mysql insert异常:(1062, "Duplicate entry '217495' for key 2")
+2017-01-20 09:44:32,409 ERROR    mysql insert异常:(1062, "Duplicate entry '803963' for key 2")
+2017-01-20 09:44:32,634 ERROR    mysql insert异常:(1062, "Duplicate entry '217475' for key 2")
+2017-01-20 09:44:33,198 ERROR    mysql insert异常:(1062, "Duplicate entry '803943' for key 2")
+2017-01-20 09:44:34,387 ERROR    mysql insert异常:(1062, "Duplicate entry '803923' for key 2")
+2017-01-20 09:44:35,322 ERROR    mysql insert异常:(1062, "Duplicate entry '803903' for key 2")
+2017-01-20 09:44:35,561 ERROR    mysql insert异常:(1062, "Duplicate entry '217455' for key 2")
+2017-01-20 09:44:36,909 ERROR    mysql insert异常:(1062, "Duplicate entry '217435' for key 2")

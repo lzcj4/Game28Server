@@ -4,7 +4,7 @@ from DBHelper import DBHelper
 
 app = Flask(__name__)
 dbHelper = DBHelper()
-games = "pc28 crazy28 korea28 speed16"
+games = "pc28 crazy28 korea28 speed16 all"
 
 
 @app.route('/maxid/<game_name>')
@@ -17,19 +17,40 @@ def get_max_id(game_name):
     id = dbHelper.select_max_id(table_name)
     return jsonify({"code": 200, "maxid": str(id)})
 
+
 @app.route('/recent10/<game_name>')
 def get_recent_10_rounds(game_name):
     if game_name is None or game_name.isspace() or \
             (game_name not in games):
         abort(404)
 
-    table_name = "tb_{}".format(game_name.lower())
-    sql = DBHelper.SELECT_ROWS_SQL.format(table_name)+" order by r_id desc limit 0,10"
+    if game_name == "all":
+        pc_list = get_rows_from_table("tb_pc28")
+        crazy_list = get_rows_from_table("tb_crazy28")
+        korea_list = get_rows_from_table("tb_korea28")
+        speed_list = get_rows_from_table("tb_speed16")
+        return jsonify({"code": 200, "pc28_count": len(pc_list), "pc28_items": pc_list,
+                        "crazy28_count": len(crazy_list), "crazy28_items": crazy_list,
+                        "korea28_count": len(korea_list), "korea28_items": korea_list,
+                        "speed16_count": len(speed_list), "speed_items": speed_list})
+    else:
+        table_name = "tb_{}".format(game_name.lower())
+        sql = DBHelper.SELECT_ROWS_SQL.format(table_name) + " order by r_id desc limit 0,10"
+        rows = dbHelper.select_all(sql)
+        row_list = []
+        for item in rows:
+            row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
+        return jsonify({"code": 200, "count": len(rows), "items": row_list})
+
+
+def get_rows_from_table(table_name):
+    sql = DBHelper.SELECT_ROWS_SQL.format(table_name) + " order by r_id desc limit 0,10"
     rows = dbHelper.select_all(sql)
     row_list = []
     for item in rows:
         row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
-    return jsonify({"code": 200, "count": len(rows), "items": row_list})
+    return row_list
+
 
 @app.route('/rounds', methods=["post"])
 def get_rounds():
@@ -84,5 +105,5 @@ def index():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-     app.run(host="0.0.0.0")
+    #app.run(debug=True)
+    app.run(host="0.0.0.0")
