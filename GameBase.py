@@ -48,6 +48,7 @@ class GameBase:
                 for block in r.iter_content(1024):
                     f.write(block)
                 print("当前验证码路径:{}".format(os.path.abspath(verify_img)))
+                logging.info("当前验证码路径:{}".format(os.path.abspath(verify_img)))
         return False
 
     @staticmethod
@@ -60,6 +61,7 @@ class GameBase:
         header["Referer"] = "http://www.juxiangyou.com/login/index?redirectUrl=/fun/play/crazy28/index"
         r = GameBase.webCrawler.post(GameBase.LOGIN_POST_URL, data, header)
         print(r.text)
+        logging.info(r.text)
         a = r.json()["code"]
         return GameBase.LOGIN_CODE_SUCCEED == a
 
@@ -72,6 +74,7 @@ class GameBase:
             is_login = GameBase.login(user, pwd, code)
         if not is_login:
             print("用户登录失败，请检查录入是否出错")
+            logging.info("用户登录失败，请检查录入是否出错")
         return is_login
 
     def get_game_url(self):
@@ -115,7 +118,7 @@ class GameBase:
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
-                print("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
+                logging.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
                 return
 

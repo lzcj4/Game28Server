@@ -11,7 +11,7 @@ class DB:
     # HOST = "rds068v4i0ni5xbccq32.mysql.rds.aliyuncs.com"
     # USER = "nick"
     # PASSWORD = "Nick_game28"
-    # DATABASE = "game"
+    # DATABASE = "game28"
 
     def __init__(self):
         try:
