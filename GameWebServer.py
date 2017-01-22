@@ -4,7 +4,17 @@ from DBHelper import DBHelper
 
 app = Flask(__name__)
 dbHelper = DBHelper()
-games = "pc28 crazy28 korea28 speed16 all"
+games = ["pc28", "crazy28", "korea28", "speed16"]
+
+
+@app.route('/count')
+def get_count():
+    dic = {}
+    for t in games:
+        table_name = "tb_{}".format(t.lower())
+        count = dbHelper.select_count(table_name)
+        dic[t] = count
+    return jsonify({"code": 200, "count": dic})
 
 
 @app.route('/maxid/<game_name>')
@@ -20,9 +30,10 @@ def get_max_id(game_name):
 
 @app.route('/recent10/<game_name>')
 def get_recent_10_rounds(game_name):
-    if game_name is None or game_name.isspace() or \
-            (game_name not in games):
-        abort(404)
+    if game_name != "all":
+        if game_name is None or game_name.isspace() or \
+                (game_name not in games):
+            abort(404)
 
     if game_name == "all":
         pc_list = get_rows_from_table("tb_pc28")
@@ -105,5 +116,5 @@ def index():
 
 
 if __name__ == '__main__':
-    #app.run(debug=True)
+    # app.run(debug=True)
     app.run(host="0.0.0.0")
