@@ -3,7 +3,7 @@ from DBHelper import DBHelper
 import os
 import bs4
 import datetime
-import logging
+import Logger
 
 
 class GameBase:
@@ -49,7 +49,7 @@ class GameBase:
                 for block in r.iter_content(1024):
                     f.write(block)
                 print("当前验证码路径:{}".format(os.path.abspath(verify_img)))
-                logging.info("当前验证码路径:{}".format(os.path.abspath(verify_img)))
+                Logger.info("当前验证码路径:{}".format(os.path.abspath(verify_img)))
         r.close()
         return False
 
@@ -62,8 +62,7 @@ class GameBase:
         header = GameBase.get_header()
         header["Referer"] = "http://www.juxiangyou.com/login/index?redirectUrl=/fun/play/crazy28/index"
         r = GameBase.webCrawler.post(GameBase.LOGIN_POST_URL, data, header)
-        print(r.text)
-        logging.info(r.text)
+        Logger.info(r.text)
         a = r.json()["code"]
         r.close()
         return GameBase.LOGIN_CODE_SUCCEED == a
@@ -76,8 +75,7 @@ class GameBase:
             user, pwd, code = code.split()
             is_login = GameBase.login(user, pwd, code)
         if not is_login:
-            print("用户登录失败，请检查录入是否出错")
-            logging.info("用户登录失败，请检查录入是否出错")
+            Logger.info("用户登录失败，请检查录入是否出错")
         return is_login
 
     def get_game_url(self):
@@ -107,8 +105,8 @@ class GameBase:
             r = GameBase.webCrawler.get(url, GameBase.get_header())
             try:
                 json = r.json()
-            except:
-                logging.error("JSON 解析出错")
+            except Exception as e:
+                Logger.error("JSON 解析出错:{0},{1}".format(e, r.text))
                 continue
             finally:
                 r.close()
@@ -120,14 +118,14 @@ class GameBase:
                     num = int(item["num"])
                     if num <= max_round:
                         is_end = True
-                        logging.info("没有新开游戏期号,当前最新期号:{0}-{1}".format(max_round, game_name))
+                        Logger.info("没有新开游戏期号,当前最新期号:{0}-{1}".format(max_round, game_name))
                         break
                     rounds.append(
                         [num, "{0}-{1}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
-                logging.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
+                Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
                 return
 

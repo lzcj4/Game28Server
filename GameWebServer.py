@@ -1,10 +1,18 @@
 from flask import Flask, jsonify, abort, request
 
 from DBHelper import DBHelper
+import Logger
 
 app = Flask(__name__)
 dbHelper = DBHelper()
 games = ["pc28", "crazy28", "korea28", "speed16"]
+
+
+def check_game_name(game_name):
+    if game_name is None or game_name.isspace() or \
+            (game_name.lower() not in games):
+        return False
+    return True
 
 
 @app.route('/count')
@@ -19,8 +27,7 @@ def get_count():
 
 @app.route('/maxid/<game_name>')
 def get_max_id(game_name):
-    if game_name is None or game_name.isspace() or \
-            (game_name not in games):
+    if not check_game_name(game_name):
         abort(404)
 
     table_name = "tb_{}".format(game_name.lower())
@@ -31,8 +38,7 @@ def get_max_id(game_name):
 @app.route('/recent10/<game_name>')
 def get_recent_10_rounds(game_name):
     if game_name != "all":
-        if game_name is None or game_name.isspace() or \
-                (game_name not in games):
+        if not check_game_name(game_name):
             abort(404)
 
     if game_name == "all":
@@ -67,14 +73,10 @@ def get_rows_from_table(table_name):
 def get_rounds():
     r_json = request.json
     game_name = r_json["game"]
-    if game_name is None or game_name.isspace() or \
-            (game_name not in games):
+    if not check_game_name(game_name):
         abort(404)
-    table_name = "tb_{}".format(r_json["game"].lower())
-    start_date = None
-    end_date = None
-    start_id = None
-    end_id = None
+    table_name = "tb_{}".format(game_name.lower())
+    start_date = end_date = start_id = end_id = None
     if "startdate" in r_json:
         start_date = r_json["startdate"]
     if "enddate" in r_json:
@@ -116,5 +118,9 @@ def index():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    app.run(host="0.0.0.0")
+    if Logger.IS_DEBUG:
+        Logger.info("/-------  开始调试模式 ------/")
+        app.run(debug=True)
+    else:
+        Logger.info("/***** 开始产品模式 *****/ ")
+        app.run(host="0.0.0.0")

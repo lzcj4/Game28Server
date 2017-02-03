@@ -1,5 +1,5 @@
 import requests
-import logging
+import Logger
 
 
 class WebCrawler:
@@ -14,17 +14,17 @@ class WebCrawler:
             WebCrawler.cookies = r.cookies
             return r
         except requests.ConnectionError as err:
-            logging.error("发起HTTP请求时ConnectionError:{}".format(err))
+            Logger.error("发起HTTP请求时ConnectionError:{}".format(err))
         except requests.HTTPError as err:
-            logging.error("发起HTTP请求时HTTPError:{}".format(err))
+            Logger.error("发起HTTP请求时HTTPError:{}".format(err))
         except requests.Timeout as err:
-            logging.error("发起HTTP请求时TimeoutError:{}".format(err))
+            Logger.error("发起HTTP请求时TimeoutError:{}".format(err))
         except requests.ConnectTimeout as err:
-            logging.error("发起HTTP请求时ConnectionError:{}".format(err))
+            Logger.error("发起HTTP请求时ConnectionError:{}".format(err))
         except requests.RequestException as err:
-            logging.error("发起HTTP请求时ConnectionError:{}".format(err))
+            Logger.error("发起HTTP请求时ConnectionError:{}".format(err))
         except requests.RequestException as err:
-            logging.error("发起HTTP请求时未知异常:{}".format(err))
+            Logger.error("发起HTTP请求时未知异常:{}".format(err))
 
     def post(self, url, data, header=None):
         try:
@@ -33,14 +33,14 @@ class WebCrawler:
             WebCrawler.cookies = r.cookies
             return r
         except requests.ConnectionError as err:
-            logging.error("发起HTTP请求时ConnectionError:{}".format(err))
+            Logger.error("发起HTTP请求时ConnectionError:{}".format(err))
         except requests.HTTPError as err:
-            logging.error("发起HTTP请求时HTTPError:{}".format(err))
+            Logger.error("发起HTTP请求时HTTPError:{}".format(err))
         except requests.Timeout as err:
-            logging.error("发起HTTP请求时TimeoutError:{}".format(err))
+            Logger.error("发起HTTP请求时TimeoutError:{}".format(err))
         except requests.ConnectTimeout as err:
-            logging.error("发起HTTP请求时ConnectionError:{}".format(err))
+            Logger.error("发起HTTP请求时ConnectionError:{}".format(err))
         except requests.RequestException as err:
-            logging.error("发起HTTP请求时ConnectionError:{}".format(err))
+            Logger.error("发起HTTP请求时ConnectionError:{}".format(err))
         except requests.RequestException as err:
-            logging.error("发起HTTP请求时未知异常:{}".format(err))
+            Logger.error("发起HTTP请求时未知异常:{}".format(err))
