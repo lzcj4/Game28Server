@@ -29,8 +29,8 @@ class DB:
             return cursor.fetchall()
         except pymysql.err.Error as err:
             Logger.error("mysql select_all异常:{}".format(err))
-        # finally:
-        #     cursor.close()
+        finally:
+            cursor.close()
 
     def select_one(self, sql):
         try:
@@ -39,8 +39,8 @@ class DB:
             return cursor.fetchone()
         except pymysql.err.Error as err:
             Logger.error("mysql select_one异常:{}".format(err))
-        # finally:
-        #     cursor.close()
+        finally:
+            cursor.close()
 
     def insert(self, sql):
         try:
@@ -49,5 +49,5 @@ class DB:
             self.db.commit()
         except pymysql.err.Error as err:
             Logger.error("mysql insert异常:{}".format(err))
-        # finally:
-        #     cursor.close()
+        finally:
+            cursor.close()

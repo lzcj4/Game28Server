@@ -53,19 +53,13 @@ def get_recent_10_rounds(game_name):
     else:
         table_name = "tb_{}".format(game_name.lower())
         sql = DBHelper.SELECT_ROWS_SQL.format(table_name) + " order by r_id desc limit 0,10"
-        rows = dbHelper.select_all(sql)
-        row_list = []
-        for item in rows:
-            row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
-        return jsonify({"code": 200, "count": len(rows), "items": row_list})
+        row_list = dbHelper.select_all(sql)
+        return jsonify({"code": 200, "count": len(row_list), "items": row_list})
 
 
 def get_rows_from_table(table_name):
     sql = DBHelper.SELECT_ROWS_SQL.format(table_name) + " order by r_id desc limit 0,10"
-    rows = dbHelper.select_all(sql)
-    row_list = []
-    for item in rows:
-        row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
+    row_list = dbHelper.select_all(sql)
     return row_list
 
 
@@ -105,11 +99,8 @@ def get_rounds():
         else:
             sql_where += " and  r_id <={}".format(end_id)
     sql += sql_where
-    rows = dbHelper.select_all(sql)
-    row_list = []
-    for item in rows:
-        row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
-    return jsonify({"code": 200, "count": len(rows), "items": row_list})
+    row_list = dbHelper.select_all(sql)
+    return jsonify({"code": 200, "count": len(row_list), "items": row_list})
 
 
 @app.route('/')

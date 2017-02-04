@@ -14,22 +14,25 @@ class DBHelper:
     def select_count(self, table):
         result = 0
         sql = DBHelper.SELECT_COUNT_SQL.format(table)
-        row = self.db.select_one(sql)
-        if row[0] is not None:
-            result = row[0]
+        rows = self.db.select_one(sql)
+        if rows[0] is not None:
+            result = rows[0]
         return result
 
     def select_max_id(self, table):
         result = 0
         sql = DBHelper.SELECT_MAX_ID_SQL.format(table)
-        row = self.db.select_one(sql)
-        if row[0] is not None:
-            result = row[0]
+        rows = self.db.select_one(sql)
+        if rows[0] is not None:
+            result = rows[0]
         return result
 
     def select_all(self, sql):
-        result = self.db.select_all(sql)
-        return result
+        rows = self.db.select_all(sql)
+        row_list = []
+        for item in rows:
+            row_list.append({'id': item[0], 'date': str(item[1]), 'value': item[2]})
+        return row_list
 
     def insert(self, table, rows):
         sql = DBHelper.INSERT_SQL.format(table)
