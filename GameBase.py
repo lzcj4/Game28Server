@@ -4,6 +4,13 @@ import os
 import bs4
 import datetime
 import Logger
+from RoundModel import RoundModel
+from enum import Enum
+
+
+class RoundType(Enum):
+    XiaoBian = 0x01
+    DaBian = 0x02
 
 
 class GameBase:
@@ -18,6 +25,12 @@ class GameBase:
 
     def __init__(self):
         self.dbHelper = DBHelper()
+        self.currentRound = None
+        self.nextStartRound = None
+        self.count_zhong = 0
+        self.count_bian = 0
+        self.count_xiao_bian = 0
+        self.count_da_bian = 0
         # if GameBase.webCrawler is None:
         #     GameBase.webCrawler = WebCrawler()
 
@@ -97,6 +110,7 @@ class GameBase:
         game_name = self.get_game_name()
         max_round = self.dbHelper.select_max_id(table_name)
         is_end = False
+
         for i in range(page_num):
             url = ("http://www.juxiangyou.com/fun/play/interaction/?jxy_parameter=%7B%22c%22%3A%22quiz%22%2C%22" + \
                    "fun%22%3A%22getEachList%22%2C%22items%22%3A%22{}%22%2C%22pageSize%22%3A20%2C%22" + \
@@ -113,15 +127,22 @@ class GameBase:
             rounds = []
             if json is None or "itemList" not in json:
                 continue
+
             for item in json["itemList"]:
-                if item["jcjg2"] is not False:
-                    num = int(item["num"])
+                num = int(item["num"])
+                temp_round = RoundModel(int(item["num"]), "{0}-{1}".format(datetime.datetime.now().year, item["date"]),
+                                        item["jcjg2"])
+                if item["iskj"]:
                     if num <= max_round:
+                        self.currentRound = temp_round
                         is_end = True
-                        Logger.info("没有新开游戏期号,当前最新期号:{0}-{1}".format(max_round, game_name))
+                        Logger.info("开奖期号遍历结束，当前最新期号:{0}-{1}".format(max_round, game_name))
                         break
-                    rounds.append(
-                        [num, "{0}-{1}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
+                    else:
+                        rounds.append(
+                            [num, "{0}-{1}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
+                else:
+                    self.nextStartRound = temp_round
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
@@ -196,3 +217,22 @@ class GameBase:
             if len(item) > 0:
                 result.append(item)
         return result
+
+    def post_next_round(self):
+        if self.currentRound is None or self.nextStartRound is None:
+            return
+
+        if 0 <= self.currentRound.value <= 9 or 18 <= self.currentRound.value <= 28:
+            self.count_bian += 1
+            self.count_zhong = 0
+            if 0 <= self.currentRound.value <= 9:
+                self.count_xiao_bian = 0
+            else:
+                self.count_da_bian += 1
+
+        else:
+            self.count_xiao_bian = 0
+            self.count_da_bian = 0
+            self.count_bian = 0
+            self.count_zhong += 1
+        pass

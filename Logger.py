@@ -2,7 +2,7 @@ import logging
 import sys
 import os
 
-IS_DEBUG = False
+IS_DEBUG = True
 
 
 def info(msg, *args, **kwargs):

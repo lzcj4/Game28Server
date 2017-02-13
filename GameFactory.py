@@ -11,7 +11,6 @@ class GameType(Enum):
     Korea28 = 0x04
     Speed16 = 0x08
 
-
 class GameFactory:
     @staticmethod
     def get_game(game_type):

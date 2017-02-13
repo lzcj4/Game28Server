@@ -4,7 +4,6 @@ from DBHelper import DBHelper
 import Logger
 
 app = Flask(__name__)
-dbHelper = DBHelper()
 games = ["pc28", "crazy28", "korea28", "speed16"]
 
 
@@ -18,6 +17,8 @@ def check_game_name(game_name):
 @app.route('/count')
 def get_count():
     dic = {}
+
+    dbHelper = DBHelper()
     for t in games:
         table_name = "tb_{}".format(t.lower())
         count = dbHelper.select_count(table_name)
@@ -30,6 +31,7 @@ def get_max_id(game_name):
     if not check_game_name(game_name):
         abort(404)
 
+    dbHelper = DBHelper()
     table_name = "tb_{}".format(game_name.lower())
     id = dbHelper.select_max_id(table_name)
     return jsonify({"code": 200, "maxid": str(id)})
@@ -41,6 +43,7 @@ def get_recent_10_rounds(game_name):
         if not check_game_name(game_name):
             abort(404)
 
+    dbHelper = DBHelper()
     if game_name == "all":
         pc_list = get_rows_from_table("tb_pc28")
         crazy_list = get_rows_from_table("tb_crazy28")
@@ -58,6 +61,7 @@ def get_recent_10_rounds(game_name):
 
 
 def get_rows_from_table(table_name):
+    dbHelper = DBHelper()
     sql = DBHelper.SELECT_ROWS_SQL.format(table_name) + " order by r_id desc limit 0,10"
     row_list = dbHelper.select_all(sql)
     return row_list
@@ -99,6 +103,8 @@ def get_rounds():
         else:
             sql_where += " and  r_id <={}".format(end_id)
     sql += sql_where
+
+    dbHelper = DBHelper()
     row_list = dbHelper.select_all(sql)
     return jsonify({"code": 200, "count": len(row_list), "items": row_list})
 
