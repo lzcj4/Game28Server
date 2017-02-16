@@ -21,7 +21,7 @@ def debug(msg, *args, **kwargs):
 
 def error(msg, *args, **kwargs):
     if IS_DEBUG:
-        print(msg)
+        print(msg, args, kwargs)
     else:
         logging.error(msg, *args, **kwargs)
 

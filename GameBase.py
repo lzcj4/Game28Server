@@ -1,18 +1,20 @@
-from WebCrawler import WebCrawler
-from DBHelper import DBHelper
-import os
-import bs4
 import datetime
-import Logger
-from RoundModel import RoundModel
+import os
 from enum import Enum
+
+import bs4
+
+import Logger
+from DBHelper import DBHelper
+from RoundModel import RoundModel
 from Rule.DaBianRule import DaBianRule
-from Rule.XiaoBianRule import XiaoBianRule
-from Rule.ZhongRule import ZhongRule
+from Rule.DaRule import DaRule
 from Rule.DanRule import DanRule
 from Rule.ShuangRule import ShuangRule
-from Rule.DaRule import DaRule
+from Rule.XiaoBianRule import XiaoBianRule
 from Rule.XiaoRule import XiaoRule
+from Rule.ZhongRule import ZhongRule
+from WebCrawler import WebCrawler
 
 
 class RoundType(Enum):
@@ -50,8 +52,14 @@ class GameBase:
         # if GameBase.webCrawler is None:
         #     GameBase.webCrawler = WebCrawler()
 
+    def get_http(self):
+        return GameBase.webCrawler
+
+    def get_header(self):
+        return GameBase.get_static_header()
+
     @staticmethod
-    def get_header():
+    def get_static_header():
         headers = {"Host": "www.juxiangyou.com",
                    "Referer": "http://www.juxiangyou.com/",
                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -64,12 +72,12 @@ class GameBase:
 
     @staticmethod
     def get_verify_code():
-        r = GameBase.webCrawler.get(GameBase.LOGIN_INDEX_URL, GameBase.get_header())
+        r = GameBase.webCrawler.get(GameBase.LOGIN_INDEX_URL, GameBase.get_static_header())
         if "游戏期号" in r.text:
             r.close()
             return True
         r.close()
-        r = GameBase.webCrawler.get(GameBase.VERIFY_URL, GameBase.get_header())
+        r = GameBase.webCrawler.get(GameBase.VERIFY_URL, GameBase.get_static_header())
         verify_img = os.path.curdir + GameBase.VERIFY_CODE_FILE_PATH
         if r.status_code == 200:
             # if os.path.exists(verify_img):
@@ -77,7 +85,6 @@ class GameBase:
             with open(verify_img, 'wb+') as f:
                 for block in r.iter_content(1024):
                     f.write(block)
-                print("当前验证码路径:{}".format(os.path.abspath(verify_img)))
                 Logger.info("当前验证码路径:{}".format(os.path.abspath(verify_img)))
         r.close()
         return False
@@ -88,7 +95,7 @@ class GameBase:
             "jxy_parameter=%7B%22c%22%3A%22index%22%2C%22fun%22%3A%22login%22%2C%22account%22%3A%22{}%22%2C%22password" + \
             "%22%3A%22{}%22%2C%22verificat_code%22%3A%22{}%22%2C%22is_auto%22%3Atrue%7D").format(
             user, pwd, verify_code)
-        header = GameBase.get_header()
+        header = GameBase.get_static_header()
         header["Referer"] = "http://www.juxiangyou.com/login/index?redirectUrl=/fun/play/crazy28/index"
         r = GameBase.webCrawler.post(GameBase.LOGIN_POST_URL, data, header)
         Logger.info(r.text)
@@ -132,7 +139,7 @@ class GameBase:
                    "fun%22%3A%22getEachList%22%2C%22items%22%3A%22{}%22%2C%22pageSize%22%3A20%2C%22" + \
                    "pageIndex%22%3A{}%7D&xtpl=fun%2Fprivate%2Fjc-index-tbl&params%5Bitems%5D={}"). \
                 format(game_name, i + 1, game_name)
-            r = GameBase.webCrawler.get(url, GameBase.get_header())
+            r = GameBase.webCrawler.get(url, self.get_header())
             try:
                 json = r.json()
             except Exception as e:

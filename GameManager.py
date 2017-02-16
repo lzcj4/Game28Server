@@ -12,6 +12,7 @@ def start_game(game_type):
     game = GameFactory.get_game(game_type)
     while is_running:
         game.get_rounds()
+        game.post_next_round()
         time.sleep(sleep_seconds)
 
 

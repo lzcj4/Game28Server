@@ -1,6 +1,3 @@
-from GameBase import GameBase
-
-
 class RuleBase:
     XIAO_BIAN_VALUES = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55]
     ZHONG_VALUES = [63, 69, 73, 75, 75, 73, 69, 63]
@@ -11,6 +8,7 @@ class RuleBase:
     def __init__(self, game):
         self.count = 0
         self.start_count = 0
+        self.game = game
         pass
 
     def get_data(self):
@@ -22,7 +20,7 @@ class RuleBase:
     def start(self):
         current_round = self.game.currentRound
         next_round = self.game.nextStartRound
-        http = GameBase.webCrawler
+        http = self.game.get_http()
         if current_round is None or next_round is None:
             return
 
@@ -32,7 +30,7 @@ class RuleBase:
             game_name = self.game.get_game_name()
             index_url = "http://www.juxiangyou.com/fun/play/{0}/index".format(game_name)
             get_url = "http://www.juxiangyou.com/fun/play/{0}/jctz?id={1}".format(game_name, next_round.id)
-            header = GameBase.get_header()
+            header = self.game.get_header()
             header["Referer"] = index_url
             r = http.get(get_url, header)
             str = r.text
