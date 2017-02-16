@@ -9,6 +9,9 @@ class XiaoRule(RuleBase):
         self.start_count = 4
         pass
 
+    def get_rule_name(self):
+        return "小投注"
+
     def check_count(self):
         current_round = self.game.currentRound
         if current_round is None:
@@ -29,4 +32,5 @@ class XiaoRule(RuleBase):
                 content += "%22{0}%22%2C".format(RuleBase.ALL_VALUES[i])
             else:
                 content += "%22{0}%22%2C".format(0)
-        content += "%5D%7D"
+        content = content[0:-6] + "%5D%7D"
+        return content

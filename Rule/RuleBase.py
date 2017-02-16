@@ -1,3 +1,6 @@
+import Logger
+
+
 class RuleBase:
     XIAO_BIAN_VALUES = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55]
     ZHONG_VALUES = [63, 69, 73, 75, 75, 73, 69, 63]
@@ -9,6 +12,9 @@ class RuleBase:
         self.count = 0
         self.start_count = 0
         self.game = game
+        pass
+
+    def get_rule_name(self):
         pass
 
     def get_data(self):
@@ -36,6 +42,7 @@ class RuleBase:
             str = r.text
             r.close()
 
+            Logger.info("++{0},连的期数：{1}".format(self.get_rule_name(), self.count))
             data = self.get_data()
             header["Referer"] = get_url
             post_url = "http://www.juxiangyou.com/fun/play/interaction"

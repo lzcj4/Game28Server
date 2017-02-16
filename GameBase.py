@@ -159,7 +159,7 @@ class GameBase:
                     if num <= max_round:
                         self.currentRound = temp_round
                         is_end = True
-                        Logger.info("开奖期号遍历结束，当前最新期号:{0}-{1}".format(max_round, game_name))
+                        # Logger.info("开奖期号遍历结束，当前最新期号:{0}-{1}".format(max_round, game_name))
                         break
                     else:
                         rounds.append(

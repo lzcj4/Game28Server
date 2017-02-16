@@ -9,6 +9,9 @@ class DaBianRule(RuleBase):
         self.start_count = 2
         pass
 
+    def get_rule_name(self):
+        return "大边投注"
+
     def check_count(self):
         current_round = self.game.currentRound
         if current_round is None:
@@ -30,4 +33,5 @@ class DaBianRule(RuleBase):
             content += "%22{0}%22%2C".format(0)
         for i in RuleBase.DA_BIAN_VALUES:
             content += "%22{0}%22%2C".format(i)
-        content += "%5D%7D"
+        content = content[0:-6] + "%5D%7D"
+        return content
