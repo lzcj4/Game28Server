@@ -32,5 +32,5 @@ class ShuangRule(RuleBase):
                 content += "%22{0}%22%2C".format(RuleBase.ALL_VALUES[i])
             else:
                 content += "%22{0}%22%2C".format(0)
-        content = content[0:-6] + "%5D%7D"
+        content = content[0:-3] + "%5D%7D"
         return content

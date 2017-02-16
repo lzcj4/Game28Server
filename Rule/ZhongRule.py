@@ -32,5 +32,5 @@ class ZhongRule(RuleBase):
             content += "%22{0}%22%2C".format(i)
         for i in RuleBase.DA_BIAN_VALUES:
             content += "%22{0}%22%2C".format(0)
-        content = content[0:-6] + "%5D%7D"
+        content = content[0:-3] + "%5D%7D"
         return content
