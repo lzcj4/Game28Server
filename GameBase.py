@@ -6,6 +6,13 @@ import datetime
 import Logger
 from RoundModel import RoundModel
 from enum import Enum
+from Rule.DaBianRule import DaBianRule
+from Rule.XiaoBianRule import XiaoBianRule
+from Rule.ZhongRule import ZhongRule
+from Rule.DanRule import DanRule
+from Rule.ShuangRule import ShuangRule
+from Rule.DaRule import DaRule
+from Rule.XiaoRule import XiaoRule
 
 
 class RoundType(Enum):
@@ -31,6 +38,15 @@ class GameBase:
         self.count_bian = 0
         self.count_xiao_bian = 0
         self.count_da_bian = 0
+
+        self.rules = []
+        self.rules.append(XiaoBianRule(self))
+        self.rules.append(ZhongRule(self))
+        self.rules.append(DaBianRule(self))
+        self.rules.append(DanRule(self))
+        self.rules.append(ShuangRule(self))
+        self.rules.append(XiaoRule(self))
+        self.rules.append(DaRule(self))
         # if GameBase.webCrawler is None:
         #     GameBase.webCrawler = WebCrawler()
 
@@ -219,20 +235,6 @@ class GameBase:
         return result
 
     def post_next_round(self):
-        if self.currentRound is None or self.nextStartRound is None:
-            return
-
-        if 0 <= self.currentRound.value <= 9 or 18 <= self.currentRound.value <= 28:
-            self.count_bian += 1
-            self.count_zhong = 0
-            if 0 <= self.currentRound.value <= 9:
-                self.count_xiao_bian = 0
-            else:
-                self.count_da_bian += 1
-
-        else:
-            self.count_xiao_bian = 0
-            self.count_da_bian = 0
-            self.count_bian = 0
-            self.count_zhong += 1
+        for item in self.rules:
+            item.start()
         pass
