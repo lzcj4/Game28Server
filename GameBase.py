@@ -13,6 +13,7 @@ from Rule.ShuangRule import ShuangRule
 from Rule.XiaoBianRule import XiaoBianRule
 from Rule.XiaoRule import XiaoRule
 from Rule.ZhongRule import ZhongRule
+from Rule.BianRule import BianRule
 from WebCrawler import WebCrawler
 
 
@@ -42,6 +43,7 @@ class GameBase:
             self.rules.append(XiaoBianRule(self))
             self.rules.append(ZhongRule(self))
             self.rules.append(DaBianRule(self))
+            self.rules.append(BianRule(self))
             self.rules.append(DanRule(self))
             self.rules.append(ShuangRule(self))
             self.rules.append(XiaoRule(self))
