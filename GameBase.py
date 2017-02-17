@@ -136,11 +136,14 @@ class GameBase:
 
         is_end = False
 
-        for i in range(page_num):
+        latest_round = None
+        running_round = None
+
+        for page in range(page_num):
             url = ("http://www.juxiangyou.com/fun/play/interaction/?jxy_parameter=%7B%22c%22%3A%22quiz%22%2C%22" + \
                    "fun%22%3A%22getEachList%22%2C%22items%22%3A%22{}%22%2C%22pageSize%22%3A20%2C%22" + \
                    "pageIndex%22%3A{}%7D&xtpl=fun%2Fprivate%2Fjc-index-tbl&params%5Bitems%5D={}"). \
-                format(game_name, i + 1, game_name)
+                format(game_name, page + 1, game_name)
             r = GameBase.webCrawler.get(url, self.get_header())
             try:
                 json = r.json()
@@ -157,27 +160,37 @@ class GameBase:
             if json is None or "itemList" not in json:
                 continue
 
+            # 数据是按时间倒序
             for item in json["itemList"]:
                 num = int(item["num"])
                 temp_round = RoundModel(int(item["num"]), "{0}-{1}".format(datetime.datetime.now().year, item["date"]),
                                         item["jcjg2"])
+
+                # 如果有多于一条历史记录时，这个会成为最早的记录，并非最近结束期号
+                if page == 0:
+                    if item["iskj"]:
+                        if latest_round is None:
+                            latest_round = temp_round
+                    else:
+                        running_round = temp_round
+
                 if item["iskj"]:
                     if num <= max_round:
-                        self.latestRound = temp_round
                         is_end = True
                         # Logger.info("开奖期号遍历结束，当前最新期号:{0}-{1}".format(max_round, game_name))
                         break
                     else:
                         rounds.append(
                             [num, "{0}-{1}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
-                else:
-                    self.runningRound = temp_round
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
                 Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
-                return True
+                break
+
+        self.latestRound = latest_round
+        self.runningRound = running_round
         return True
 
     def get_rows(self, html):
