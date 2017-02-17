@@ -187,7 +187,10 @@ class GameBase:
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
-                Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
+                if len(rounds) == 1:
+                    Logger.info("历史数据 {0} 值：{1}".format(game_name, rounds[0]))
+                else:
+                    Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
                 break
 
