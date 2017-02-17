@@ -9,6 +9,8 @@ Include/
 Lib/
 Scripts/
 tcl/
+Logs/
+
 
 # C extensions
 *.so

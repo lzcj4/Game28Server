@@ -143,7 +143,10 @@ class GameBase:
             try:
                 json = r.json()
             except Exception as e:
-                Logger.error("JSON 解析出错:{0},{1}".format(e, r.text))
+                if r is None:
+                    Logger.error("JSON 解析出错:{0},JSON为空没法获取".format(e))
+                else:
+                    Logger.error("JSON 解析出错:{0},{1}".format(e, r.text))
                 continue
             finally:
                 r.close()
