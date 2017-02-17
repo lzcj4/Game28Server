@@ -29,7 +29,7 @@ class ZhongRule(RuleBase):
         for i in RuleBase.XIAO_BIAN_VALUES:
             content += "%22{0}%22%2C".format(0)
         for i in RuleBase.ZHONG_VALUES:
-            content += "%22{0}%22%2C".format(i)
+            content += "%22{0}%22%2C".format(self.get_value_by_rate(i))
         for i in RuleBase.DA_BIAN_VALUES:
             content += "%22{0}%22%2C".format(0)
         content = content[0:-3] + "%5D%7D"

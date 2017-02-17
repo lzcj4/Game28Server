@@ -28,7 +28,7 @@ class DanRule(RuleBase):
                    "%22%2C%22lssue%22%3A%22{1}" + "%22%2C%22lotteryData%22%3A%5B").format(game_name, next_round.id)
         for i in range(len(RuleBase.ALL_VALUES)):
             if i % 2 == 1:
-                content += "%22{0}%22%2C".format(RuleBase.ALL_VALUES[i])
+                content += "%22{0}%22%2C".format(self.get_value_by_rate(RuleBase.ALL_VALUES[i]))
             else:
                 content += "%22{0}%22%2C".format(0)
         content = content[0:-3] + "%5D%7D"

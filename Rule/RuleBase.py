@@ -8,10 +8,15 @@ class RuleBase:
     DA_BIAN_VALUES.reverse()
     ALL_VALUES = XIAO_BIAN_VALUES + ZHONG_VALUES + DA_BIAN_VALUES
 
+    VALUE_RATE = 10 * 10
+
     def __init__(self, game):
         self.count = 0
         self.game = game
         pass
+
+    def get_value_by_rate(self, i):
+        return i * RuleBase.VALUE_RATE
 
     def get_start_index(self):
         return 4
