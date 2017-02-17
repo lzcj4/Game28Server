@@ -49,7 +49,8 @@ class RuleBase:
                 # Logger.info(html)
                 r.close()
 
-            Logger.info("++{0},连的期数：{1}".format(self.get_rule_name(), self.count))
+            Logger.info("++{0},连的期数：{1}，投注期号:{2} ,已经开奖期号:{3}".format(self.get_rule_name(), self.count,
+                                                                     running_round.id, latest_round.id))
             data = self.get_data()
             header["Referer"] = get_url
             post_url = "http://www.juxiangyou.com/fun/play/interaction"
