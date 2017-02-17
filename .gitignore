@@ -10,7 +10,7 @@ Lib/
 Scripts/
 tcl/
 Logs/
-
+*.pyc
 
 # C extensions
 *.so

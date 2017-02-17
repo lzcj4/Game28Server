@@ -6,6 +6,9 @@ class Korea28(GameBase):
     TABLE = "tb_korea28"
     GAME_NAME = "korea28"
 
+    def __init__(self, is_auto_fire=False):
+        GameBase.__init__(self, is_auto_fire)
+
     def get_game_url(self):
         return self.GAME_INDEX
 

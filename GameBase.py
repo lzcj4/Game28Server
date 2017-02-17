@@ -1,6 +1,5 @@
 import datetime
 import os
-from enum import Enum
 
 import bs4
 
@@ -17,11 +16,6 @@ from Rule.ZhongRule import ZhongRule
 from WebCrawler import WebCrawler
 
 
-class RoundType(Enum):
-    XiaoBian = 0x01
-    DaBian = 0x02
-
-
 class GameBase:
     HOST = "http://www.juxiangyou.com/"
     LOGIN_INDEX_URL = HOST + "fun/play/crazy28/index"
@@ -32,25 +26,28 @@ class GameBase:
     LOAD_PAGES = 50
     webCrawler = WebCrawler()
 
-    def __init__(self):
+    def __init__(self, is_auto_fire=False):
         self.dbHelper = DBHelper()
-        self.currentRound = None
-        self.nextStartRound = None
+        """最近开的期"""
+        self.latestRound = None
+        """正在进去期"""
+        self.runningRound = None
         self.count_zhong = 0
         self.count_bian = 0
         self.count_xiao_bian = 0
         self.count_da_bian = 0
 
         self.rules = []
-        self.rules.append(XiaoBianRule(self))
-        self.rules.append(ZhongRule(self))
-        self.rules.append(DaBianRule(self))
-        self.rules.append(DanRule(self))
-        self.rules.append(ShuangRule(self))
-        self.rules.append(XiaoRule(self))
-        self.rules.append(DaRule(self))
-        # if GameBase.webCrawler is None:
-        #     GameBase.webCrawler = WebCrawler()
+        if is_auto_fire:
+            self.rules.append(XiaoBianRule(self))
+            self.rules.append(ZhongRule(self))
+            self.rules.append(DaBianRule(self))
+            self.rules.append(DanRule(self))
+            self.rules.append(ShuangRule(self))
+            self.rules.append(XiaoRule(self))
+            self.rules.append(DaRule(self))
+            # if GameBase.webCrawler is None:
+            #     GameBase.webCrawler = WebCrawler()
 
     def get_http(self):
         return GameBase.webCrawler
@@ -126,12 +123,17 @@ class GameBase:
     def get_rounds(self):
         # if not GameBase.login_action():
         #     return
-        self.get_pages(GameBase.LOAD_PAGES)
+        return self.get_pages(GameBase.LOAD_PAGES)
 
     def get_pages(self, page_num):
         table_name = self.get_table_name()
         game_name = self.get_game_name()
         max_round = self.dbHelper.select_max_id(table_name)
+        if self.runningRound is not None:
+            if datetime.datetime.now().minute - self.runningRound.date.minute < 1:
+                Logger.info("当前期{0}还没有开奖，直接返回".format(self.runningRound.id))
+                return False
+
         is_end = False
 
         for i in range(page_num):
@@ -150,6 +152,7 @@ class GameBase:
                 continue
             finally:
                 r.close()
+
             rounds = []
             if json is None or "itemList" not in json:
                 continue
@@ -160,7 +163,7 @@ class GameBase:
                                         item["jcjg2"])
                 if item["iskj"]:
                     if num <= max_round:
-                        self.currentRound = temp_round
+                        self.latestRound = temp_round
                         is_end = True
                         # Logger.info("开奖期号遍历结束，当前最新期号:{0}-{1}".format(max_round, game_name))
                         break
@@ -168,13 +171,14 @@ class GameBase:
                         rounds.append(
                             [num, "{0}-{1}".format(datetime.datetime.now().year, item["date"]), item["jcjg2"]])
                 else:
-                    self.nextStartRound = temp_round
+                    self.runningRound = temp_round
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
                 Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
-                return
+                return True
+        return True
 
     def get_rows(self, html):
         """

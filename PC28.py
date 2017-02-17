@@ -6,6 +6,9 @@ class PC28(GameBase):
     TABLE = "tb_pc28"
     GAME_NAME = "pc28"
 
+    def __init__(self, is_auto_fire=False):
+        GameBase.__init__(self, is_auto_fire)
+
     def get_game_url(self):
         return self.GAME_INDEX
 

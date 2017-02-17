@@ -6,6 +6,9 @@ class Speed16(GameBase):
     TABLE = "tb_speed16"
     GAME_NAME = "speed16"
 
+    def __init__(self, is_auto_fire=False):
+        GameBase.__init__(self, is_auto_fire)
+
     def get_game_url(self):
         return self.GAME_INDEX
 

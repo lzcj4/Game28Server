@@ -10,9 +10,14 @@ class RuleBase:
 
     def __init__(self, game):
         self.count = 0
-        self.start_count = 0
         self.game = game
         pass
+
+    def get_start_index(self):
+        return 4
+
+    def get_end_index(self):
+        return 6
 
     def get_rule_name(self):
         pass
@@ -24,28 +29,33 @@ class RuleBase:
         pass
 
     def start(self):
-        current_round = self.game.currentRound
-        next_round = self.game.nextStartRound
+        latest_round = self.game.latestRound
+        running_round = self.game.runningRound
         http = self.game.get_http()
-        if current_round is None or next_round is None:
+        if latest_round is None or running_round is None:
             return
 
         self.check_count()
 
-        if self.count >= self.start_count:
+        if self.get_start_index() <= self.count < self.get_end_index():
             game_name = self.game.get_game_name()
             index_url = "http://www.juxiangyou.com/fun/play/{0}/index".format(game_name)
-            get_url = "http://www.juxiangyou.com/fun/play/{0}/jctz?id={1}".format(game_name, next_round.id)
+            get_url = "http://www.juxiangyou.com/fun/play/{0}/jctz?id={1}".format(game_name, running_round.id)
             header = self.game.get_header()
             header["Referer"] = index_url
             r = http.get(get_url, header)
-            str = r.text
-            r.close()
+            if r is not None:
+                # html = r.text
+                # Logger.info(html)
+                r.close()
 
             Logger.info("++{0},连的期数：{1}".format(self.get_rule_name(), self.count))
             data = self.get_data()
             header["Referer"] = get_url
             post_url = "http://www.juxiangyou.com/fun/play/interaction"
             r = http.post(post_url, data, header)
-            str = r.text
-            r.close()
+
+            if r is not None:
+                html = r.text
+                Logger.info(html)
+                r.close()
