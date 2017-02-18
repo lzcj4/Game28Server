@@ -7,14 +7,16 @@ IS_DEBUG = True
 
 def info(msg, *args, **kwargs):
     if IS_DEBUG:
-        print(msg,args,kwargs)
+        # print(msg,args,kwargs)
+        print(msg)
     else:
         logging.info(msg, *args, **kwargs)
 
 
 def debug(msg, *args, **kwargs):
     if IS_DEBUG:
-        print(msg, args, kwargs)
+        print(msg)
+        # print(msg, args, kwargs)
     else:
         logging.debug(msg, *args, **kwargs)
 

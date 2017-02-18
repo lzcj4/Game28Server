@@ -1,5 +1,5 @@
 from Rule.RuleBase import RuleBase
-
+import  Logger
 
 class DanRule(RuleBase):
     """单投注"""
@@ -18,6 +18,8 @@ class DanRule(RuleBase):
 
         if current_round.value % 2 == 1:
             self.count += 1
+            Logger.info("游戏{0}，期号:{1} 值:{2}，单计数++：{3}".format(
+                self.game.get_game_name(), current_round.id, current_round.value, self.count))
         else:
             self.count = 0
 

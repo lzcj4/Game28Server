@@ -54,14 +54,17 @@ class RuleBase:
                 # Logger.info(html)
                 r.close()
 
-            Logger.info("++{0},连的期数：{1}，投注期号:{2} ,已经开奖期号:{3}".format(self.get_rule_name(), self.count,
-                                                                     running_round.id, latest_round.id))
             data = self.get_data()
             header["Referer"] = get_url
             post_url = "http://www.juxiangyou.com/fun/play/interaction"
             r = http.post(post_url, data, header)
-
             if r is not None:
                 html = r.text
-                Logger.info(html)
+                Logger.info(
+                    "++ 游戏{0}，{1} 连的期数:{2},投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
+                                                                     running_round.id, html))
                 r.close()
+            else:
+                Logger.error(
+                    "++ 游戏{0}，{1} 连的期数:{2},投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
+                                                                     running_round.id, "投入失败"))

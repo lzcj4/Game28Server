@@ -17,7 +17,7 @@ class GameFactory:
     def get_game(game_type):
         result = None
         if game_type == GameType.PC28:
-            result = PC28()
+            result = PC28(True)
         elif game_type == GameType.Crazy28:
             result = Crazy28(True)
         elif game_type == GameType.Korea28:

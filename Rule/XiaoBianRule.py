@@ -1,5 +1,5 @@
 from Rule.RuleBase import RuleBase
-
+import  Logger
 
 class XiaoBianRule(RuleBase):
     """小边投注"""
@@ -24,6 +24,8 @@ class XiaoBianRule(RuleBase):
 
         if 0 <= current_round.value <= 9:
             self.count += 1
+            Logger.info("游戏{0}，期号:{1} 值:{2}，小边计数++：{3}".format(
+                self.game.get_game_name(), current_round.id, current_round.value, self.count))
         else:
             self.count = 0
 

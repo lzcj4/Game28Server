@@ -37,6 +37,7 @@ class GameBase:
         self.count_bian = 0
         self.count_xiao_bian = 0
         self.count_da_bian = 0
+        self.is_internal_logged = False
 
         self.rules = []
         if is_auto_fire:
@@ -73,7 +74,7 @@ class GameBase:
     def get_verify_code():
         r = GameBase.webCrawler.get(GameBase.LOGIN_INDEX_URL, GameBase.get_static_header())
         if "游戏期号" in r.text:
-            r.close()
+            GameBase.close_request(r)
             return True
         r.close()
         r = GameBase.webCrawler.get(GameBase.VERIFY_URL, GameBase.get_static_header())
@@ -85,8 +86,14 @@ class GameBase:
                 for block in r.iter_content(1024):
                     f.write(block)
                 Logger.info("当前验证码路径:{}".format(os.path.abspath(verify_img)))
-        r.close()
+
+        GameBase.close_request(r)
         return False
+
+    @staticmethod
+    def close_request(r):
+        if r is not None:
+            r.close
 
     @staticmethod
     def login(user, pwd, verify_code):
@@ -99,7 +106,7 @@ class GameBase:
         r = GameBase.webCrawler.post(GameBase.LOGIN_POST_URL, data, header)
         Logger.info(r.text)
         a = r.json()["code"]
-        r.close()
+        GameBase.close_request(r)
         return GameBase.LOGIN_CODE_SUCCEED == a
 
     @staticmethod
@@ -133,9 +140,14 @@ class GameBase:
         max_round = self.dbHelper.select_max_id(table_name)
         if self.runningRound is not None:
             if datetime.datetime.now().minute - self.runningRound.date.minute < 1:
-                Logger.info("当前期{0}还没有开奖，直接返回".format(self.runningRound.id))
+                '''去除太多重复日志'''
+                if not self.is_internal_logged:
+                    Logger.info("游戏：{0}，当前期{1}还没有开奖，直接返回 {2}".format(
+                        game_name, self.runningRound.id, datetime.datetime.now()))
+                    self.is_internal_logged = True
                 return False
 
+        self.is_internal_logged = False
         is_end = False
 
         latest_round = None
@@ -156,7 +168,7 @@ class GameBase:
                     Logger.error("JSON 解析出错:{0},{1}".format(e, r.text))
                 continue
             finally:
-                r.close()
+                GameBase.close_request(r)
 
             rounds = []
             if json is None or "itemList" not in json:
