@@ -135,17 +135,18 @@ class GameBase:
         return self.get_pages(GameBase.LOAD_PAGES)
 
     def get_pages(self, page_num):
+        result = False
         table_name = self.get_table_name()
         game_name = self.get_game_name()
         max_round = self.dbHelper.select_max_id(table_name)
         if self.runningRound is not None:
-            if datetime.datetime.now().minute - self.runningRound.date.minute < 1:
+            if (datetime.datetime.now() - self.runningRound.date).seconds < 60:
                 '''去除太多重复日志'''
                 if not self.is_internal_logged:
                     Logger.info("游戏：{0}，当前期{1}还没有开奖，直接返回 {2}".format(
                         game_name, self.runningRound.id, datetime.datetime.now()))
                     self.is_internal_logged = True
-                return False
+                return result
 
         self.is_internal_logged = False
         is_end = False
@@ -178,7 +179,7 @@ class GameBase:
             for item in json["itemList"]:
                 num = int(item["num"])
                 temp_round = RoundModel(int(item["num"]), "{0}-{1}".format(datetime.datetime.now().year, item["date"]),
-                                        item["jcjg2"])
+                                        item["jcjg2"], int(item["jing"]), int(item["shou"]))
 
                 # 如果有多于一条历史记录时，这个会成为最早的记录，并非最近结束期号
                 if page == 0:
@@ -207,8 +208,13 @@ class GameBase:
                 break
 
         self.latestRound = latest_round
+        if self.runningRound is not None and running_round is not None and \
+                        self.runningRound.id == running_round.id:
+            result = False
+        else:
+            result = True
         self.runningRound = running_round
-        return True
+        return result
 
     def get_rows(self, html):
         """

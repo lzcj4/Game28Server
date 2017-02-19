@@ -15,8 +15,8 @@ def info(msg, *args, **kwargs):
 
 def debug(msg, *args, **kwargs):
     if IS_DEBUG:
-        print(msg)
-        # print(msg, args, kwargs)
+
+        print(msg, args, kwargs)
     else:
         logging.debug(msg, *args, **kwargs)
 

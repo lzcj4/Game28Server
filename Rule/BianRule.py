@@ -26,7 +26,7 @@ class BianRule(RuleBase):
         if 0 <= current_round.value <= 9 or \
                                 18 <= current_round.value <= 27:
             self.count += 1
-            Logger.info("游戏{0}，期号:{1} 值:{2}，边计数++：{3}".format(
+            Logger.info("游戏: {0}，期号:{1} 值:{2}，边计数++：{3}".format(
                 self.game.get_game_name(), current_round.id, current_round.value, self.count))
         else:
             self.count = 0

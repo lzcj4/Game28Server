@@ -12,6 +12,8 @@ def start_game(game_type):
     game = GameFactory.get_game(game_type)
     while is_running:
         if game.get_rounds():
+            '''刚开奖会要等会'''
+            time.sleep(5)
             game.post_next_round()
         time.sleep(sleep_seconds)
 

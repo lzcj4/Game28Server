@@ -13,6 +13,7 @@ class RuleBase:
     def __init__(self, game):
         self.count = 0
         self.game = game
+        self.is_running = True
         pass
 
     def get_value_by_rate(self, i):
@@ -34,6 +35,8 @@ class RuleBase:
         pass
 
     def start(self):
+        # if not self.is_running:
+        #     return
         latest_round = self.game.latestRound
         running_round = self.game.runningRound
         http = self.game.get_http()
@@ -61,10 +64,13 @@ class RuleBase:
             if r is not None:
                 html = r.text
                 Logger.info(
-                    "++ 游戏{0}，{1} 连的期数:{2},投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
+                    "----》》 游戏{0}，{1} 连 {2} 期,投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
                                                                      running_round.id, html))
+                if "账户余额不足" in html:
+                    self.is_running = False
+                    Logger.error("----》》 当前账户余额不足,结束自动投注")
                 r.close()
             else:
                 Logger.error(
-                    "++ 游戏{0}，{1} 连的期数:{2},投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
+                    "----》》 游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
                                                                      running_round.id, "投入失败"))
