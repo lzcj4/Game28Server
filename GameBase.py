@@ -200,8 +200,10 @@ class GameBase:
 
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
-                if len(rounds) == 1:
-                    Logger.info("历史数据 {0} 值：{1}".format(game_name, rounds[0]))
+                if len(rounds) == 1 and latest_round is not None:
+                    Logger.info("历史数据 {0} 值：{1}, U豆 投：{2},赚:{3}".format(game_name, rounds[0],
+                                                                        latest_round.jing,
+                                                                        latest_round.shou - latest_round.jing))
                 else:
                     Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:

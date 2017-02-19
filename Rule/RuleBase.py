@@ -8,7 +8,7 @@ class RuleBase:
     DA_BIAN_VALUES.reverse()
     ALL_VALUES = XIAO_BIAN_VALUES + ZHONG_VALUES + DA_BIAN_VALUES
 
-    VALUE_RATE = 10 * 10
+    VALUE_RATE = 2 * 10 * 10
 
     def __init__(self, game):
         self.count = 0
@@ -65,7 +65,7 @@ class RuleBase:
                 html = r.text
                 Logger.info(
                     "----》》 游戏{0}，{1} 连 {2} 期,投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
-                                                                     running_round.id, html))
+                                                                        running_round.id, html))
                 if "账户余额不足" in html:
                     self.is_running = False
                     Logger.error("----》》 当前账户余额不足,结束自动投注")
@@ -73,4 +73,4 @@ class RuleBase:
             else:
                 Logger.error(
                     "----》》 游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
-                                                                     running_round.id, "投入失败"))
+                                                                         running_round.id, "投入失败"))
