@@ -9,18 +9,20 @@ class DaBianRule(RuleBase):
         pass
 
     def get_start_index(self):
-        return 2
+        return RuleBase.BIAN_START_COUNT
 
     def get_end_index(self):
-        return 4
+        return RuleBase.BIAN_END_COUNT
 
     def get_rule_name(self):
         return "大边投注"
 
     def check_count(self):
         current_round = self.game.latestRound
-        if current_round is None:
+        if current_round is None or \
+                        self.last_id == current_round.id:
             return
+        self.last_id = current_round.id
 
         if 18 <= current_round.value <= 27:
             self.count += 1

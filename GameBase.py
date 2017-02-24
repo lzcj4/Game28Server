@@ -1,5 +1,6 @@
 import datetime
 import os
+import time
 
 import bs4
 
@@ -25,6 +26,7 @@ class GameBase:
     VERIFY_CODE_FILE_PATH = "/Img/verifyCode.png"
     LOGIN_CODE_SUCCEED = 10000
     LOAD_PAGES = 50
+    CHECK_INTERVAL = 20
     webCrawler = WebCrawler()
 
     def __init__(self, is_auto_fire=False):
@@ -140,11 +142,11 @@ class GameBase:
         game_name = self.get_game_name()
         max_round = self.dbHelper.select_max_id(table_name)
         if self.runningRound is not None:
-            if (datetime.datetime.now() - self.runningRound.date).seconds < 60:
+            if (datetime.datetime.now() - self.runningRound.date).seconds < GameBase.CHECK_INTERVAL:
                 '''去除太多重复日志'''
                 if not self.is_internal_logged:
                     Logger.info("游戏：{0}，当前期{1}还没有开奖，直接返回 {2}".format(
-                        game_name, self.runningRound.id, datetime.datetime.now()))
+                        game_name, self.runningRound.id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
                     self.is_internal_logged = True
                 return result
 
@@ -201,9 +203,9 @@ class GameBase:
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
                 if len(rounds) == 1 and latest_round is not None:
-                    Logger.info("历史数据 {0} 值：{1}, U豆 投：{2},赚:{3}".format(game_name, rounds[0],
-                                                                        latest_round.jing,
-                                                                        latest_round.shou - latest_round.jing))
+                    Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, rounds[0],
+                                                                                     latest_round.jing,
+                                                                                     latest_round.shou - latest_round.jing))
                 else:
                     Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
@@ -288,5 +290,6 @@ class GameBase:
 
     def post_next_round(self):
         for item in self.rules:
-            item.start()
+            if item.start():
+               time.sleep(3)
         pass

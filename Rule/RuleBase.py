@@ -1,4 +1,5 @@
 import Logger
+import datetime
 
 
 class RuleBase:
@@ -8,22 +9,29 @@ class RuleBase:
     DA_BIAN_VALUES.reverse()
     ALL_VALUES = XIAO_BIAN_VALUES + ZHONG_VALUES + DA_BIAN_VALUES
 
-    VALUE_RATE = 2 * 10 * 10
+    BIAN_START_COUNT = 2
+    BIAN_END_COUNT = 3
+
+    LIAN_START_COUNT = 3
+    LIAN_END_COUNT = 9
+
+    VALUE_RATE = 1 * 10 * 10
 
     def __init__(self, game):
         self.count = 0
         self.game = game
         self.is_running = True
+        self.last_id = 0
         pass
 
     def get_value_by_rate(self, i):
         return i * RuleBase.VALUE_RATE
 
     def get_start_index(self):
-        return 4
+        return RuleBase.LIAN_START_COUNT
 
     def get_end_index(self):
-        return 6
+        return RuleBase.LIAN_END_COUNT
 
     def get_rule_name(self):
         pass
@@ -41,7 +49,7 @@ class RuleBase:
         running_round = self.game.runningRound
         http = self.game.get_http()
         if latest_round is None or running_round is None:
-            return
+            return False
 
         self.check_count()
 
@@ -64,13 +72,20 @@ class RuleBase:
             if r is not None:
                 html = r.text
                 Logger.info(
-                    "----》》 游戏{0}，{1} 连 {2} 期,投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
-                                                                        running_round.id, html))
+                    "----》》 游戏{0}，{1} 连 {2} 期,投注期号:{3},投注结果:{4},{5}".format(game_name, self.get_rule_name(), self.count,
+                                                                            running_round.id, html,
+                                                                            datetime.datetime.now().strftime(
+                                                                                "%Y-%m-%d %H:%M:%S")))
+                return True
                 if "账户余额不足" in html:
                     self.is_running = False
                     Logger.error("----》》 当前账户余额不足,结束自动投注")
                 r.close()
             else:
                 Logger.error(
-                    "----》》 游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4}".format(game_name, self.get_rule_name(), self.count,
-                                                                         running_round.id, "投入失败"))
+                    "----》》 游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4},{5}".format(game_name, self.get_rule_name(),
+                                                                             self.count,
+                                                                             running_round.id, "投入失败",
+                                                                             datetime.datetime.now().strftime(
+                                                                                 "%Y-%m-%d %H:%M:%S")))
+            return False

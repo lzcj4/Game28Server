@@ -13,8 +13,10 @@ class ZhongRule(RuleBase):
 
     def check_count(self):
         current_round = self.game.latestRound
-        if current_round is None:
+        if current_round is None or \
+                        self.last_id == current_round.id:
             return
+        self.last_id = current_round.id
 
         if 10 <= current_round.value <= 17:
             self.count += 1

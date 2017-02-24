@@ -1,5 +1,6 @@
 from Rule.RuleBase import RuleBase
-import  Logger
+import Logger
+
 
 class XiaoRule(RuleBase):
     """小投注"""
@@ -13,8 +14,10 @@ class XiaoRule(RuleBase):
 
     def check_count(self):
         current_round = self.game.latestRound
-        if current_round is None:
+        if current_round is None or \
+                        self.last_id == current_round.id:
             return
+        self.last_id = current_round.id
 
         if current_round.value < 14:
             self.count += 1

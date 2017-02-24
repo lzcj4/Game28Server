@@ -5,7 +5,7 @@ from GameFactory import GameFactory, GameType
 from GameBase import GameBase
 
 is_running = True
-sleep_seconds = 2 * 10
+sleep_seconds = 1 * 10
 
 
 def start_game(game_type):
@@ -13,7 +13,7 @@ def start_game(game_type):
     while is_running:
         if game.get_rounds():
             '''刚开奖会要等会'''
-            time.sleep(5)
+            # time.sleep(5)
             game.post_next_round()
         time.sleep(sleep_seconds)
 
