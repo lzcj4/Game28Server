@@ -73,7 +73,7 @@ class RuleBase:
             if r is not None:
                 html = r.text
                 Logger.info(
-                    "- - - >> 游戏{0}，{1} 连 {2} 期,投注期号:{3},{4},投注结果:{5},{6}".format(game_name, self.get_rule_name(),
+                    "- - - >> 游戏{0}，{1} 连 {2} 期,投注期号:{3},豆子：{4},投注结果:{5},{6}".format(game_name, self.get_rule_name(),
                                                                                   self.count,
                                                                                   colored(running_round.id, "red"),
                                                                                   colored(bean_count, "red"), html,
