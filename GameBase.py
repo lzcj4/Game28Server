@@ -123,6 +123,18 @@ class GameBase:
             Logger.info("用户登录失败，请检查录入是否出错")
         return is_login
 
+    @staticmethod
+    def get_color_red(str):
+        if str is not None:
+            return colored(str, "red")
+        return str
+
+    @staticmethod
+    def get_color_green(str):
+        if str is not None:
+            return colored(str, "green")
+        return str
+
     def get_game_url(self):
         pass
 
@@ -146,8 +158,9 @@ class GameBase:
             if (datetime.datetime.now() - self.runningRound.date).seconds < GameBase.CHECK_INTERVAL:
                 '''去除太多重复日志'''
                 if not self.is_internal_logged:
-                    Logger.info("游戏：{0}，当前期{1}还没有开奖，直接返回 {2}".format(
-                        game_name, self.runningRound.id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+                    Logger.info("游戏：{0}，当前期:{1} 还没有开奖，直接返回 {2}".format(
+                        GameBase.get_color_red(game_name), GameBase.get_color_red(self.runningRound.id),
+                        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
                     self.is_internal_logged = True
                 return result
 
@@ -205,18 +218,18 @@ class GameBase:
                 self.dbHelper.insert(table_name, rounds)
                 if len(rounds) == 1 and latest_round is not None:
                     win_result = latest_round.shou - latest_round.jing
-                    item_str = "[{0},{1},{2}]".format(colored(latest_round.id, "red"), latest_round.date,
-                                                      colored(latest_round.value, "red"))
+                    item_str = "[{0},{1},{2}]".format(GameBase.get_color_red(latest_round.id), latest_round.date,
+                                                                             GameBase.get_color_red(latest_round.value))
                     if win_result > 0:
-                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, item_str,
-                                                                                         colored(latest_round.jing,
-                                                                                                 "red"),
-                                                                                         colored(win_result, "green")))
+                        Logger.info(
+                            "历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(GameBase.get_color_red(game_name), item_str,
+                                                                                 GameBase.get_color_red(latest_round.jing),
+                                                                                 GameBase.get_color_green(win_result)))
                     else:
-                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, item_str,
-                                                                                         colored(latest_round.jing,
-                                                                                                 "red"),
-                                                                                         colored(win_result, "red")))
+                        Logger.info(
+                            "历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(GameBase.get_color_red(game_name), item_str,
+                                                                                 GameBase.get_color_red(latest_round.jing),
+                                                                                 GameBase.get_color_red(win_result)))
                 else:
                     Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:

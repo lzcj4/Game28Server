@@ -28,6 +28,18 @@ class RuleBase:
     def get_value_by_rate(self, i):
         return i * RuleBase.VALUE_RATE
 
+    @staticmethod
+    def get_color_red(str):
+        if str is not None:
+            return colored(str, "red")
+        return str
+
+    @staticmethod
+    def get_color_green(str):
+        if str is not None:
+            return colored(str, "green")
+        return str
+
     def get_start_index(self):
         return RuleBase.LIAN_START_COUNT
 
@@ -73,12 +85,13 @@ class RuleBase:
             if r is not None:
                 html = r.text
                 Logger.info(
-                    "- - - >> 游戏{0}，{1} 连 {2} 期,投注期号:{3},豆子：{4},投注结果:{5},{6}".format(game_name, self.get_rule_name(),
-                                                                                  self.count,
-                                                                                  colored(running_round.id, "red"),
-                                                                                  colored(bean_count, "red"), html,
-                                                                                  datetime.datetime.now().strftime(
-                                                                                      "%Y-%m-%d %H:%M:%S")))
+                    "- - - >> 游戏{0}，{1} 连 {2} 期,投注期号:{3},豆子：{4},投注结果:{5},{6}".format(
+                        RuleBase.get_color_red(game_name), RuleBase.get_color_red(self.get_rule_name()),
+                        RuleBase.get_color_green(self.count),
+                        RuleBase.get_color_red(running_round.id),
+                        RuleBase.get_color_red(bean_count), html,
+                        datetime.datetime.now().strftime(
+                            "%Y-%m-%d %H:%M:%S")))
                 return True
                 if "账户余额不足" in html:
                     self.is_running = False
@@ -86,10 +99,11 @@ class RuleBase:
                 r.close()
             else:
                 Logger.error(
-                    "- - - >>  游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4},{5}".format(game_name, self.get_rule_name(),
-                                                                                self.count,
-                                                                                colored(running_round.id, "red"),
-                                                                                  colored("投入失败", "red"),
-                                                                                datetime.datetime.now().strftime(
-                                                                                    "%Y-%m-%d %H:%M:%S")))
-            return False
+                    "- - - >>  游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4},{5}".format(
+                        RuleBase.get_color_red(game_name), RuleBase.get_color_red(self.get_rule_name()),
+                        RuleBase.get_color_green(self.count),
+                        RuleBase.get_color_red(running_round.id),
+                        RuleBase.get_color_red("投入失败"),
+                        datetime.datetime.now().strftime(
+                            "%Y-%m-%d %H:%M:%S")))
+                return False

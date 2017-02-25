@@ -1,5 +1,6 @@
 from Rule.RuleBase import RuleBase
 import Logger
+from termcolor import colored
 
 
 class BianRule(RuleBase):
@@ -29,7 +30,8 @@ class BianRule(RuleBase):
                                 18 <= current_round.value <= 27:
             self.count += 1
             Logger.info("游戏: {0}，期号:{1} 值:{2}，边计数++：{3}".format(
-                self.game.get_game_name(), current_round.id, current_round.value, self.count))
+                RuleBase.get_color_red(self.game.get_game_name()), RuleBase.get_color_red(current_round.id),
+                RuleBase.get_color_red(current_round.value), RuleBase.get_color_green(self.count)))
         else:
             self.count = 0
 
