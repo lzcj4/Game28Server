@@ -7,6 +7,7 @@ import bs4
 import Logger
 from DBHelper import DBHelper
 from RoundModel import RoundModel
+from Rule.BianRule import BianRule
 from Rule.DaBianRule import DaBianRule
 from Rule.DaRule import DaRule
 from Rule.DanRule import DanRule
@@ -14,8 +15,8 @@ from Rule.ShuangRule import ShuangRule
 from Rule.XiaoBianRule import XiaoBianRule
 from Rule.XiaoRule import XiaoRule
 from Rule.ZhongRule import ZhongRule
-from Rule.BianRule import BianRule
 from WebCrawler import WebCrawler
+from termcolor import colored
 
 
 class GameBase:
@@ -203,9 +204,18 @@ class GameBase:
             if len(rounds) > 0:
                 self.dbHelper.insert(table_name, rounds)
                 if len(rounds) == 1 and latest_round is not None:
-                    Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, rounds[0],
-                                                                                     latest_round.jing,
-                                                                                     latest_round.shou - latest_round.jing))
+                    win_result = latest_round.shou - latest_round.jing
+
+                    if win_result > 0:
+                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, rounds[0],
+                                                                                         colored(latest_round.jing,
+                                                                                                 "red"),
+                                                                                         colored(win_result, "green")))
+                    else:
+                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, rounds[0],
+                                                                                         colored(latest_round.jing,
+                                                                                                 "red"),
+                                                                                         colored(win_result, "red")))
                 else:
                     Logger.info("{0} - 历史数据 {1}:{2}条".format(datetime.datetime.now(), game_name, len(rounds)))
             if is_end:
@@ -291,5 +301,5 @@ class GameBase:
     def post_next_round(self):
         for item in self.rules:
             if item.start():
-               time.sleep(3)
+                time.sleep(3)
         pass
