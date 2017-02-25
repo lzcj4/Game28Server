@@ -1,6 +1,7 @@
 from Rule.RuleBase import RuleBase
 import Logger
 
+
 class DaBianRule(RuleBase):
     """大边投注"""
 
@@ -36,11 +37,14 @@ class DaBianRule(RuleBase):
         game_name = self.game.get_game_name()
         content = ("jxy_parameter=%7B%22fun%22%3A%22lottery%22%2C%22c%22%3A%22quiz%22%2C%22items%22%3A%22{0}" + \
                    "%22%2C%22lssue%22%3A%22{1}" + "%22%2C%22lotteryData%22%3A%5B").format(game_name, next_round.id)
+        bean_count = 0
         for i in RuleBase.XIAO_BIAN_VALUES:
             content += "%22{0}%22%2C".format(0)
         for i in RuleBase.ZHONG_VALUES:
             content += "%22{0}%22%2C".format(0)
         for i in RuleBase.DA_BIAN_VALUES:
-            content += "%22{0}%22%2C".format(self.get_value_by_rate(i))
+            new_value = self.get_value_by_rate(i)
+            bean_count += new_value
+            content += "%22{0}%22%2C".format(new_value)
         content = content[0:-3] + "%5D%7D"
-        return content
+        return content, bean_count

@@ -205,14 +205,15 @@ class GameBase:
                 self.dbHelper.insert(table_name, rounds)
                 if len(rounds) == 1 and latest_round is not None:
                     win_result = latest_round.shou - latest_round.jing
-
+                    item_str = "[{0},{1},{2}]".format(colored(latest_round.id, "red"), latest_round.date,
+                                                      colored(latest_round.value, "red"))
                     if win_result > 0:
-                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, rounds[0],
+                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, item_str,
                                                                                          colored(latest_round.jing,
                                                                                                  "red"),
                                                                                          colored(win_result, "green")))
                     else:
-                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, rounds[0],
+                        Logger.info("历史数据 {0} 值：{1}, U豆   **** 投：{2}, 赚:{3} ****".format(game_name, item_str,
                                                                                          colored(latest_round.jing,
                                                                                                  "red"),
                                                                                          colored(win_result, "red")))

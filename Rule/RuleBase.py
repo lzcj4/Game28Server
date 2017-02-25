@@ -1,5 +1,6 @@
 import Logger
 import datetime
+from termcolor import colored
 
 
 class RuleBase:
@@ -13,7 +14,7 @@ class RuleBase:
     BIAN_END_COUNT = 3
 
     LIAN_START_COUNT = 3
-    LIAN_END_COUNT = 9
+    LIAN_END_COUNT = 6
 
     VALUE_RATE = 1 * 10 * 10
 
@@ -65,27 +66,30 @@ class RuleBase:
                 # Logger.info(html)
                 r.close()
 
-            data = self.get_data()
+            data, bean_count = self.get_data()
             header["Referer"] = get_url
             post_url = "http://www.juxiangyou.com/fun/play/interaction"
             r = http.post(post_url, data, header)
             if r is not None:
                 html = r.text
                 Logger.info(
-                    "----》》 游戏{0}，{1} 连 {2} 期,投注期号:{3},投注结果:{4},{5}".format(game_name, self.get_rule_name(), self.count,
-                                                                            running_round.id, html,
-                                                                            datetime.datetime.now().strftime(
-                                                                                "%Y-%m-%d %H:%M:%S")))
+                    "- - - >> 游戏{0}，{1} 连 {2} 期,投注期号:{3},{4},投注结果:{5},{6}".format(game_name, self.get_rule_name(),
+                                                                                  self.count,
+                                                                                  colored(running_round.id, "red"),
+                                                                                  colored(bean_count, "red"), html,
+                                                                                  datetime.datetime.now().strftime(
+                                                                                      "%Y-%m-%d %H:%M:%S")))
                 return True
                 if "账户余额不足" in html:
                     self.is_running = False
-                    Logger.error("----》》 当前账户余额不足,结束自动投注")
+                    Logger.error("- - - >> 当前账户余额不足,结束自动投注")
                 r.close()
             else:
                 Logger.error(
-                    "----》》 游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4},{5}".format(game_name, self.get_rule_name(),
-                                                                             self.count,
-                                                                             running_round.id, "投入失败",
-                                                                             datetime.datetime.now().strftime(
-                                                                                 "%Y-%m-%d %H:%M:%S")))
+                    "- - - >>  游戏{0}，{1} 连 {2} 期, 投注期号:{3},投注结果:{4},{5}".format(game_name, self.get_rule_name(),
+                                                                                self.count,
+                                                                                colored(running_round.id, "red"),
+                                                                                  colored("投入失败", "red"),
+                                                                                datetime.datetime.now().strftime(
+                                                                                    "%Y-%m-%d %H:%M:%S")))
             return False
